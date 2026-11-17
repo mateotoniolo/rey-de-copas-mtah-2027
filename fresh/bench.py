@@ -377,8 +377,9 @@ def dtag(tag, dur=None):
     out = f"{tag}-dur" if (DUR if dur is None else dur) else tag
     out = f"{out}-gain" if GAIN and (DUR if dur is None else dur) else out
     out = f"{out}-chg" if CHANGE and (DUR if dur is None else dur) else out
-    if (DUR if dur is None else dur) and config.DEGRADE != 1:
-        out = f"{out}-g{config.DEGRADE}"
+    degradation = int(os.environ.get("FRESH_TRAIN_DEGRADE") or config.DEGRADE)
+    if (DUR if dur is None else dur) and degradation != 1:
+        out = f"{out}-g{degradation}"
     if (DUR if dur is None else dur) and config.DUR_MERGE is not None:
         out = f"{out}-d{config.DUR_MERGE:g}"
     if (DUR if dur is None else dur) and config.DUR_SCALE != 1.0:

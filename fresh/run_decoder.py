@@ -12,6 +12,7 @@ import argparse
 import json
 import time
 from multiprocessing import Pool
+from pathlib import Path
 
 import bench
 import data_io
@@ -89,18 +90,31 @@ def main():
     parser.add_argument("--n", type=int, default=200)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--top", type=int, default=8)
+    parser.add_argument("--search-only", action="store_true",
+                        help="write the DFL search and skip the final prediction on the provided match")
+    parser.add_argument("--candidates-from", type=Path,
+                        help="reuse the exact candidate values stored in an earlier search file")
     parser.add_argument("--seeds", default="0", help="the evidence of run_lomo.py --seeds")
     args = parser.parse_args()
     seeds = bench.parse_seeds(args.seeds)
     tag = bench.evidence_tag(args.set, seeds)
     began = time.time()
-    candidates = sample_candidates(args.n, args.seed)
+    if args.candidates_from is None:
+        candidates = sample_candidates(args.n, args.seed)
+    else:
+        with np.load(args.candidates_from, allow_pickle=False) as source:
+            candidates = [json.loads(candidate) for candidate in source["candidates"]]
+        if len(candidates) != args.n:
+            parser.error("--n must match the number of stored candidates")
     with Pool(bench.WORKERS, initializer=_init, initargs=(tag, args.l2, args.merge)) as pool:
         results = pool.map(_score, candidates, chunksize=4)
     order = np.argsort([-r[0] for r in results], kind="stable")
     np.savez(data_io.OUT / f"decoder-{bench.dtag(tag)}-m{args.merge:g}-s{args.seed}-all.npz",
              merged=np.array([r[2] for r in results]), raw=np.array([r[3] for r in results]),
              candidates=np.array([json.dumps(c) for c in candidates]))
+    if args.search_only:
+        print(f"DFL search complete: {len(candidates)} candidates, {time.time() - began:.0f} s")
+        return
 
     # the match: a model on all seven DFL matches, the same columns
     from run_lomo import FEATURE_SETS

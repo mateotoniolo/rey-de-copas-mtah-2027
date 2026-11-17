@@ -1,6 +1,6 @@
 """Public football made to look like the match's tracking, and its truths made comparable.
 
-Degradation, calibrated only on label-free aggregates of the match (fresh/stats.py):
+Version 1 uses label-free aggregates of the provided tracking (fresh/stats.py):
 - the ball is blurred by a centred mean plus a little jitter, so its one-frame velocity changes
   match the match's (median ~0.23 m/s, 99th percentile ~1.5 m/s; DFL raw: 0.25 and 21);
 - the ball is hidden in long gaps, regardless of the state, on ~41% of frames, with gap lengths
@@ -8,6 +8,8 @@ Degradation, calibrated only on label-free aggregates of the match (fresh/stats.
   shorter than 1 s). Hiding regardless of the state is deliberate: what a gap says about a stoppage
   in this match is learned from the match itself (fresh/adapt.py), not assumed from another
   provider.
+
+The submitted variant A uses version 4, whose fixed settings are defined below.
 
 `merge_short` smooths DFL's possession flag: a spell shorter than T stays with the team that had
 the ball before it ("possession stays with the last team that had it", CHALLENGE.md). T is

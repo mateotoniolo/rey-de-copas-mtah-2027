@@ -2,8 +2,7 @@
 
 For each DFL match in turn, the search's candidates are ranked on the other six (held-out evidence
 from fresh/run_lomo.py, merged truth), a pick is made by each rule, and the pick is scored on the
-match left out. No match is ever scored by a pick that saw it. Label-free: DFL and the public rate
-only.
+match left out. Decoder ranking and scoring use external DFL matches.
 
     uv run python fresh/run_nested.py --set nogap [--seeds 0,10,20]
 

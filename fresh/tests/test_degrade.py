@@ -23,7 +23,7 @@ def _match():
     return ball, truth, [(0, len(truth))]
 
 
-def test_train_degrade_does_not_rename_the_decoder_file(monkeypatch):
+def test_train_degrade_matches_explicit_version_4(monkeypatch):
     monkeypatch.setenv("FRESH_TRAIN_DEGRADE", "4")
     ball, truth, runs = _match()
     players = np.zeros((len(truth), 2, 2), np.float32)
@@ -32,8 +32,6 @@ def test_train_degrade_does_not_rename_the_decoder_file(monkeypatch):
     forced = public.degrade(tracking, runs, seed=2)
     explicit = public.degrade(tracking, runs, seed=2, version=4)
     np.testing.assert_array_equal(forced.ball, explicit.ball)
-    import bench
-    assert "g4" not in bench.dtag("setp")
 
 
 def test_version_4_uses_fixed_constants_and_no_truth():

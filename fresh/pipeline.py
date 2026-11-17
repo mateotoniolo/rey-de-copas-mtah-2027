@@ -44,7 +44,7 @@ TOP = 10  # decoders whose median is used, or who vote
 MERGE = config.MERGE  # fresh/config.json merge_seconds, chosen on DFL only
 SEED_ENSEMBLE = (0, 10, 20)
 SELF_WEIGHT = 0.5  # C: share of the self-trained model in the evidence
-FINAL = "A"  # the submitted variant (fresh/README.md). B remains available as --variant B.
+FINAL = "A"  # the submitted variant (README.md). B remains available as --variant B.
 VARIANTS = ("A", "B", "C", "Ae", "Av", "Aev", "Be", "Bv", "Bev")
 
 
